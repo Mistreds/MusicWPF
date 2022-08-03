@@ -6,13 +6,20 @@
         xmlns:local="clr-namespace:MusicWPF"
         WindowStyle="None"
         Topmost="True"
+         ShowInTaskbar="False"
           xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d" Background="#DB0C0C14" AllowsTransparency="True"
         Title="MainWindow" Height="200" Width="500">
     <Window.Resources>
         <Image x:Key="ImageBack" Source="\Resource\music-back.png" />
-        <Image x:Key="ImageStart" Source="\Resources\play_button.png" />
+
+        <Image x:Key="ImageStart" Source="/Resources/play-button.png" />
+        <Image x:Key="startico" Source="/Resources/play-button.ico" />
+
         <Image x:Key="ImageForward" Source="/Resources/music-next.png" />
+        <ContextMenu x:Key="Menu">
+            <MenuItem Header="Закрыть" x:Name="Close" Click="Close_Click"></MenuItem>
+        </ContextMenu>
     </Window.Resources>
 
     <Grid>
@@ -22,7 +29,7 @@
             <ColumnDefinition ></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <tb:TaskbarIcon Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
+        <tb:TaskbarIcon   ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
         <Image x:Name="Image" Margin="15"  ></Image>
 
         <Grid Grid.Column="1">

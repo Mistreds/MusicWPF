@@ -30,27 +30,39 @@ namespace MusicWPF
 
      private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
         private GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties;
+        private GlobalSystemMediaTransportControlsSession CurrMusSession;
         public MainWindow()
         {
             InitializeComponent();
+
             var image_next = new System.Windows.Controls.Image();
             image_next.Source=ToImage(Properties.Resources.music_next);
             Next.Content=image_next;
             var image_back = new System.Windows.Controls.Image();
             image_back.Source=ToImage(Properties.Resources.music_back);
             Back.Content=image_back;
+            Tray.Icon=Properties.Resources.play_button1;
             _ = Maisn();
             Hide();
         }
         public  async Task Maisn()
         {
             gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-            mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
-          
+            try
+            {
+                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+            }
+            catch
+            {
+                await AwaitMedia();
+                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
 
-            var CurrMusSession = gsmtcsm.GetCurrentSession();
-            CurrMusSession.PlaybackInfoChanged += Ss_PlaybackInfoChanged;
-           await UpdatePlayback();
+            }
+            CurrMusSession = gsmtcsm.GetCurrentSession();
+            await Ss_PlaybackInfoChanged();
+
+
         }
         private void UpdatePlayPause(string type)
         {
@@ -58,9 +70,9 @@ namespace MusicWPF
             {
                 var image = new System.Windows.Controls.Image();
                 image.Source=ToImage(Properties.Resources.play_button);
-
+                Tray.Icon=Properties.Resources.play_button1;
                 StartStop.Content=image;
-                //Tray.IconSource=(ImageSource)ToImage(Properties.Resources.play_button);
+              
 
 
             }
@@ -68,18 +80,40 @@ namespace MusicWPF
             {
                 var image = new System.Windows.Controls.Image();
                 image.Source=ToImage(Properties.Resources.video_pause_button);
-                 StartStop.Content=image;
-               // Tray.IconSource=(ImageSource)ToImage(Properties.Resources.video_pause_button);
+                Tray.Icon=Properties.Resources.video_pause_button1;
+                StartStop.Content=image;
+              
 
             }
         }
 
+        private static BitmapImage GetImage(string imageUri)
+        {
+            var bitmapImage = new BitmapImage();
+
+            bitmapImage.BeginInit();
+            bitmapImage.UriSource = new Uri( imageUri, UriKind.RelativeOrAbsolute);
+            bitmapImage.EndInit();
+
+            return bitmapImage;
+        }
         private  async Task UpdatePlayback()
         {
+          
             await Task.Run(async() =>
             {
                 gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+                try
+                {
+                    mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+                }
+                catch
+                {
+                    await AwaitMedia();
+                    gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                    mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+
+                }
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
                     Track.Text=mediaProperties.Title;
@@ -89,6 +123,7 @@ namespace MusicWPF
                 var CurrSession = gsmtcsm.GetCurrentSession();
                
                 var play_back = CurrSession.GetPlaybackInfo();
+                
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
                     UpdatePlayPause(play_back.PlaybackStatus.ToString());
@@ -112,11 +147,16 @@ namespace MusicWPF
             });
            
         }
-        private async  void Ss_PlaybackInfoChanged(GlobalSystemMediaTransportControlsSession sender, PlaybackInfoChangedEventArgs args)
+        private async Task Ss_PlaybackInfoChanged()
         {
-  
-            await UpdatePlayback();
-           
+            await Task.Run(async() => { 
+            while (true)
+            {
+                await UpdatePlayback();
+                    Thread.Sleep(250);
+            }
+            });
+
         }
 
         private BitmapImage ToImage(byte[] array)//Делаем из потока байтов картинку
@@ -145,37 +185,72 @@ namespace MusicWPF
     private  async Task<GlobalSystemMediaTransportControlsSessionManager> GetSystemMediaTransportControlsSessionManager() =>
             await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
 
-        private  async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session) =>
-            await session.TryGetMediaPropertiesAsync();
+        private  async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session)
+     => await session.TryGetMediaPropertiesAsync();
+             
+            
+        
 
+        private async Task AwaitMedia()
+        {
+            await Task.Run(async() => {
+                while (true)
+                {
+                    try
+                    {
+                        var session= await GetSystemMediaTransportControlsSessionManager();
+                        var ss = await session.GetCurrentSession().TryGetMediaPropertiesAsync();
+                        break;
+                    }
+                    catch
+                    {
+                       
+                        continue;
+                    }
+                }
+            });
+                
+        
+        }
         private async void Back_Click(object sender, RoutedEventArgs e)
         {
-            var CurrSession = gsmtcsm.GetCurrentSession();
-           
-            await CurrSession.TrySkipPreviousAsync();
+            try
+            {
+                var CurrSession = gsmtcsm.GetCurrentSession();
+
+                await CurrSession.TrySkipPreviousAsync();
+            }
+            catch { }
 
         }
 
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            var CurrSession = gsmtcsm.GetCurrentSession();
-           
-            await CurrSession.TrySkipNextAsync();
+            try
+            {
+                var CurrSession = gsmtcsm.GetCurrentSession();
+
+                await CurrSession.TrySkipNextAsync();
+            }
+            catch { }
         }
 
         private async void StartStop_Click(object sender, RoutedEventArgs e)
         {
-            var CurrSession = gsmtcsm.GetCurrentSession();
-           
-            var play_back = CurrSession.GetPlaybackInfo();
-            if(play_back.PlaybackStatus.ToString()=="Paused")
+            try
             {
-                await CurrSession.TryPlayAsync();
+                var CurrSession = gsmtcsm.GetCurrentSession();
+                var play_back = CurrSession.GetPlaybackInfo();
+                if (play_back.PlaybackStatus.ToString()=="Paused")
+                {
+                    await CurrSession.TryPlayAsync();
+                }
+                else
+                {
+                    await CurrSession.TryPauseAsync();
+                }
             }
-            else
-            {
-                await CurrSession.TryPauseAsync();
-            }
+            catch { }
         }
 
         private void TaskbarIcon_TrayLeftMouseDown(object sender, RoutedEventArgs e)
@@ -194,6 +269,11 @@ namespace MusicWPF
                 this.Show();
             }
                 
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }
