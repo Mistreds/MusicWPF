@@ -1,0 +1,56 @@
+﻿<Window x:Class="MusicWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicWPF"
+        WindowStyle="None"
+        Topmost="True"
+          xmlns:tb="http://www.hardcodet.net/taskbar"
+        mc:Ignorable="d" Background="#DB0C0C14" AllowsTransparency="True"
+        Title="MainWindow" Height="200" Width="500">
+    <Window.Resources>
+        <Image x:Key="ImageBack" Source="\Resource\music-back.png" />
+        <Image x:Key="ImageStart" Source="\Resources\play_button.png" />
+        <Image x:Key="ImageForward" Source="/Resources/music-next.png" />
+    </Window.Resources>
+
+    <Grid>
+       
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition ></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <tb:TaskbarIcon Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
+        <Image x:Name="Image" Margin="15"  ></Image>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"></RowDefinition>
+                <RowDefinition Height="40" ></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="10"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="Track" FontSize="16" Grid.Row="1"  Margin="5" Foreground="White"></TextBlock>
+            <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White"></TextBlock>
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Content="{StaticResource ImageBack}" BorderBrush="Transparent"  Background="Transparent" Grid.Column="0" x:Name="Back" Click="Back_Click">
+                </Button>
+                <Button Content="{StaticResource ImageStart}" BorderBrush="Transparent"  Background="Transparent" Grid.Column="1" x:Name="StartStop" Click="StartStop_Click"></Button>
+                <Button Content="{StaticResource   ImageForward}" BorderBrush="Transparent"  Background="Transparent"  x:Name="Next" Grid.Column="2" Click="Next_Click">
+                </Button>
+            </Grid>
+          
+        </Grid>
+
+    </Grid>
+
+</Window>
