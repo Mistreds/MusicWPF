@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,41 +18,88 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Windows.ApplicationModel.Store;
 using Windows.Media;
 using Windows.Media.Control;
 using Windows.Media.Playback;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Net.WebRequestMethods;
 
-namespace MusicWPF
+
+namespace MusicWidget
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
+        private GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
         private GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties;
-        private GlobalSystemMediaTransportControlsSession CurrMusSession;
+        private RegistryKey currApp;
+        private bool IsBlockMove;
         public MainWindow()
         {
             InitializeComponent();
-            
-
+            DataContext=this;
             var primaryMonitorArea = SystemParameters.WorkArea;
             Left = primaryMonitorArea.Right - Width-5;
-            Top = primaryMonitorArea.Bottom - Height-5 ;
+            Top = primaryMonitorArea.Bottom - Height-5;
             var image_next = new System.Windows.Controls.Image();
             image_next.Source=ToImage(Properties.Resources.music_next);
             Next.Content=image_next;
             var image_back = new System.Windows.Controls.Image();
             image_back.Source=ToImage(Properties.Resources.music_back);
             Back.Content=image_back;
-            Tray.Icon=Properties.Resources.play_button1;
+            System.Drawing.Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+            Console.WriteLine(resolution);
+            currApp=GetAppKey();
+            UpdateLeftTop();
+            IsBlockMove=true;
+            this.Loaded+=MainWindow_Loaded;
             _ = Maisn();
-            Hide();
+            
         }
-        public  async Task Maisn()
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            HideFromAltTab(new System.Windows.Interop.WindowInteropHelper(this).Handle);
+        }
+
+        private void UpdateLeftTop()
+        {
+            this.Left =Convert.ToDouble(currApp.GetValue("left"));
+            this.Top =Convert.ToDouble(currApp.GetValue("top"));
+            this.Width=Convert.ToDouble(currApp.GetValue("width"));
+            this.Height=Convert.ToDouble(currApp.GetValue("height"));
+        }
+        private void UpdateReg()
+        {
+            currApp.SetValue("left", Left.ToString());
+            currApp.SetValue("top", Top.ToString());
+            currApp.SetValue("width", ActualWidth);
+            currApp.SetValue("height", ActualHeight);
+        }
+        private RegistryKey GetAppKey()
+        {
+            RegistryKey currentUserKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true);
+            Console.WriteLine(currentUserKey);
+            RegistryKey currenApp = currentUserKey.OpenSubKey("MusicWidget", true);
+            if(currenApp==null)
+            {
+                currentUserKey.CreateSubKey("MusicWidget");
+                currenApp = currentUserKey.OpenSubKey("MusicWidget", true);
+            }    
+            if (currenApp.GetValue("left")==null)
+            { currenApp.SetValue("left", "200"); }  
+            if (currenApp.GetValue("top")==null)
+            { currenApp.SetValue("top", "200"); }
+            if (currenApp.GetValue("height")==null)
+            { currenApp.SetValue("height", "400"); }
+            if (currenApp.GetValue("width")==null)
+            { currenApp.SetValue("width", "400"); }
+            return currenApp;
+        }
+        public async Task Maisn()
         {
             gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
             try
@@ -65,14 +113,14 @@ namespace MusicWPF
                 mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
 
             }
-            CurrMusSession = gsmtcsm.GetCurrentSession();
+
             try
             {
 
-            
-            var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,300) };
-            timer.Tick += async (o,O) => await UpdatePlayback();
-            timer.Start();
+
+                var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 300) };
+                timer.Tick += async (o, O) => await UpdatePlayback();
+                timer.Start();
             }
             catch
             {
@@ -80,28 +128,28 @@ namespace MusicWPF
             }
 
         }
-            private void UpdatePlayPause(string type)
+        private void UpdatePlayPause(string type)
+        {
+            if (type=="Paused")
             {
-                if (type=="Paused")
-                {
-                    var image = new System.Windows.Controls.Image();
-                    image.Source=ToImage(Properties.Resources.play_button);
-                    Tray.Icon=Properties.Resources.play_button1;
-                    StartStop.Content=image;
-              
+                var image = new System.Windows.Controls.Image();
+                image.Source=ToImage(Properties.Resources.play_button);
+          
+                StartStop.Content=image;
 
 
-                }
-                else
-                {
-                    var image = new System.Windows.Controls.Image();
-                    image.Source=ToImage(Properties.Resources.video_pause_button);
-                    Tray.Icon=Properties.Resources.video_pause_button1;
-                    StartStop.Content=image;
-              
 
-                }
             }
+            else
+            {
+                var image = new System.Windows.Controls.Image();
+                image.Source=ToImage(Properties.Resources.video_pause_button);
+ 
+                StartStop.Content=image;
+
+
+            }
+        }
         private async Task UpdatePlayback()
         {
 
@@ -138,12 +186,12 @@ namespace MusicWPF
                 });
                 try
                 {
-
+                   
 
                     var ssss = await mediaProperties.Thumbnail.OpenReadAsync();
+                   
 
-
-
+                   
                     using (StreamReader sr = new StreamReader(ssss.AsStreamForRead()))
                     {
                         var bytes = default(byte[]);
@@ -171,18 +219,6 @@ namespace MusicWPF
             });
 
         }
-        private async Task Ss_PlaybackInfoChanged()
-        {
-            await Task.Run(async() => { 
-            while (true)
-            {
-                await UpdatePlayback();
-                    Thread.Sleep(250);
-            }
-            });
-
-        }
-
         private BitmapImage ToImage(byte[] array)//Делаем из потока байтов картинку
         {
             using (var ms = new System.IO.MemoryStream(array))
@@ -205,36 +241,29 @@ namespace MusicWPF
                 }
             }
         }
-    
-    private  async Task<GlobalSystemMediaTransportControlsSessionManager> GetSystemMediaTransportControlsSessionManager() =>
-            await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+        private async Task<GlobalSystemMediaTransportControlsSessionManager> GetSystemMediaTransportControlsSessionManager() =>
+                await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
 
-        private  async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session)
+        private async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session)
      => await session.TryGetMediaPropertiesAsync();
-             
-            
-        
-
         private async Task AwaitMedia()
         {
-            await Task.Run(async() => {
+            await Task.Run(async () => {
                 while (true)
                 {
                     try
                     {
-                        var session= await GetSystemMediaTransportControlsSessionManager();
+                        var session = await GetSystemMediaTransportControlsSessionManager();
                         var ss = await session.GetCurrentSession().TryGetMediaPropertiesAsync();
                         break;
                     }
                     catch
                     {
-                       
+
                         continue;
                     }
                 }
             });
-                
-        
         }
         private async void Back_Click(object sender, RoutedEventArgs e)
         {
@@ -279,44 +308,87 @@ namespace MusicWPF
             catch { }
         }
 
-        private void TaskbarIcon_TrayLeftMouseDown(object sender, RoutedEventArgs e)
-        {
-            if (this.IsVisible)
-            {
-             
-                this.Hide();
-            }
-                
-            else
-            {
-
-                this.Show();
-                HideFromAltTab(new System.Windows.Interop.WindowInteropHelper(this).Handle);
-            }
-                
-        }
-
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
         }
 
-        private async  void Tray_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        #region Bottommost
+
+        [DllImport("user32.dll")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+        const UInt32 SWP_NOSIZE = 0x0001;
+        const UInt32 SWP_NOMOVE = 0x0002;
+        const UInt32 SWP_NOACTIVATE = 0x0010;
+
+        private void ToBack()
         {
-            try
+            var handle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            ToBack();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            ToBack();
+        }
+
+        #endregion
+
+        #region Move
+
+        private bool winDragged = false;
+        private Point lmAbs = new Point();
+
+        void Window_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            winDragged = true;
+            this.lmAbs = e.GetPosition(this);
+            this.lmAbs.Y = Convert.ToInt16(this.Top) + this.lmAbs.Y;
+            this.lmAbs.X = Convert.ToInt16(this.Left) + this.lmAbs.X;
+            Mouse.Capture(this);
+        }
+
+        void Window_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            winDragged = false;
+            Mouse.Capture(null);
+        }
+
+        void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (IsBlockMove)
+                return;
+            if (winDragged)
             {
-                var CurrSession = gsmtcsm.GetCurrentSession();
-                var play_back = CurrSession.GetPlaybackInfo();
-                if (play_back.PlaybackStatus.ToString()=="Paused")
-                {
-                    await CurrSession.TryPlayAsync();
-                }
-                else
-                {
-                    await CurrSession.TryPauseAsync();
-                }
+                Point MousePosition = e.GetPosition(this);
+                Point MousePositionAbs = new Point();
+                MousePositionAbs.X = Convert.ToInt16(this.Left) + MousePosition.X;
+                MousePositionAbs.Y = Convert.ToInt16(this.Top) + MousePosition.Y;
+                this.Left = this.Left + (MousePositionAbs.X - this.lmAbs.X);
+                this.Top = this.Top + (MousePositionAbs.Y - this.lmAbs.Y);
+                this.lmAbs = MousePositionAbs;
+                UpdateReg();
             }
-            catch { }
+        }
+        #endregion
+
+        private void MoveClick_Click(object sender, RoutedEventArgs e)
+        {
+            IsBlockMove=!IsBlockMove;
+            if (IsBlockMove)
+                this.ResizeMode=ResizeMode.NoResize;
+            else
+                this.ResizeMode=ResizeMode.CanResizeWithGrip;
+            
         }
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr window, int index, int value);
@@ -332,5 +404,11 @@ namespace MusicWPF
             SetWindowLong(Handle, GWL_EXSTYLE, GetWindowLong(Handle,
                 GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
         }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateReg();
+        }
     }
 }
+

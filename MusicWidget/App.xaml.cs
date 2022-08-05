@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace MusicWPF
+namespace MusicWidget
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -19,13 +19,13 @@ namespace MusicWPF
         public App()
         {
 
-           // ConsoleHelper.AllocConsole();
+            // ConsoleHelper.AllocConsole();
             this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            
-            Process.Start("MusicWPF.exe");
+
+            Process.Start("MusicWidget.exe");
             Process.GetCurrentProcess().Kill();
         }
         public class ConsoleHelper

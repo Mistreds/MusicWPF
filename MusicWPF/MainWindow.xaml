@@ -8,7 +8,7 @@
         Topmost="True"
          ShowInTaskbar="False"
           xmlns:tb="http://www.hardcodet.net/taskbar"
-        mc:Ignorable="d" Background="#C00B1520" AllowsTransparency="True"
+        mc:Ignorable="d"  Background="Transparent" AllowsTransparency="True"
         Title="MainWindow" Height="150" Width="400">
     <Window.Resources>
         <Image x:Key="ImageBack" Source="\Resource\music-back.png" />
@@ -22,6 +22,7 @@
         </ContextMenu>
     </Window.Resources>
 
+    <Border Background="#B20B1520" CornerRadius="15">
     <Grid>
        
         <Grid.ColumnDefinitions>
@@ -29,7 +30,7 @@
             <ColumnDefinition  Width="3*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <tb:TaskbarIcon  TrayMouseDoubleClick="Tray_TrayMouseDoubleClick"   ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
+        <tb:TaskbarIcon    ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
         <Image x:Name="Image" Margin="10"  ></Image>
 
         <Grid Grid.Column="1">
@@ -59,5 +60,5 @@
         </Grid>
 
     </Grid>
-
+    </Border>
 </Window>
