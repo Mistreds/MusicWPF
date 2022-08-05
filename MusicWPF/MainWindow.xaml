@@ -8,8 +8,8 @@
         Topmost="True"
          ShowInTaskbar="False"
           xmlns:tb="http://www.hardcodet.net/taskbar"
-        mc:Ignorable="d" Background="#DB0C0C14" AllowsTransparency="True"
-        Title="MainWindow" Height="200" Width="500">
+        mc:Ignorable="d" Background="#C00B1520" AllowsTransparency="True"
+        Title="MainWindow" Height="150" Width="400">
     <Window.Resources>
         <Image x:Key="ImageBack" Source="\Resource\music-back.png" />
 
@@ -25,21 +25,21 @@
     <Grid>
        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"></ColumnDefinition>
-            <ColumnDefinition ></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition  Width="3*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <tb:TaskbarIcon   ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
-        <Image x:Name="Image" Margin="15"  ></Image>
+        <tb:TaskbarIcon  TrayMouseDoubleClick="Tray_TrayMouseDoubleClick"   ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
+        <Image x:Name="Image" Margin="10"  ></Image>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10"></RowDefinition>
-                <RowDefinition Height="40" ></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition Height="60"></RowDefinition>
-                <RowDefinition Height="10"></RowDefinition>
+                <RowDefinition Height="0.5*"></RowDefinition>
+                <RowDefinition Height="1*" ></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="0.5*" ></RowDefinition>
+                <RowDefinition Height="1.5*"></RowDefinition>
+                <RowDefinition Height="0.5*"></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock x:Name="Track" FontSize="16" Grid.Row="1"  Margin="5" Foreground="White"></TextBlock>
             <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White"></TextBlock>

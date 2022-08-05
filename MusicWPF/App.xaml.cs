@@ -17,7 +17,7 @@ namespace MusicWPF
         public App()
         {
 
-            //ConsoleHelper.AllocConsole();
+           // ConsoleHelper.AllocConsole();
         }
         public class ConsoleHelper
         {

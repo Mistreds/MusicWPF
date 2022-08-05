@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Windows.Media;
 using Windows.Media.Control;
 using Windows.Media.Playback;
@@ -28,13 +29,15 @@ namespace MusicWPF
     public partial class MainWindow : Window
     {
 
-     private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
+        private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
         private GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties;
         private GlobalSystemMediaTransportControlsSession CurrMusSession;
         public MainWindow()
         {
             InitializeComponent();
-
+            var primaryMonitorArea = SystemParameters.WorkArea;
+            Left = primaryMonitorArea.Right - Width-5;
+            Top = primaryMonitorArea.Bottom - Height-5 ;
             var image_next = new System.Windows.Controls.Image();
             image_next.Source=ToImage(Properties.Resources.music_next);
             Next.Content=image_next;
@@ -60,32 +63,43 @@ namespace MusicWPF
 
             }
             CurrMusSession = gsmtcsm.GetCurrentSession();
-            await Ss_PlaybackInfoChanged();
+            //await Ss_PlaybackInfoChanged();
+            try
+            {
 
+            
+            var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,300) };
+            timer.Tick += async (o,O) => await UpdatePlayback();
+            timer.Start();
+            }
+            catch
+            {
+                MessageBox.Show("");
+            }
 
         }
-        private void UpdatePlayPause(string type)
-        {
-            if (type=="Paused")
+            private void UpdatePlayPause(string type)
             {
-                var image = new System.Windows.Controls.Image();
-                image.Source=ToImage(Properties.Resources.play_button);
-                Tray.Icon=Properties.Resources.play_button1;
-                StartStop.Content=image;
+                if (type=="Paused")
+                {
+                    var image = new System.Windows.Controls.Image();
+                    image.Source=ToImage(Properties.Resources.play_button);
+                    Tray.Icon=Properties.Resources.play_button1;
+                    StartStop.Content=image;
               
 
 
-            }
-            else
-            {
-                var image = new System.Windows.Controls.Image();
-                image.Source=ToImage(Properties.Resources.video_pause_button);
-                Tray.Icon=Properties.Resources.video_pause_button1;
-                StartStop.Content=image;
+                }
+                else
+                {
+                    var image = new System.Windows.Controls.Image();
+                    image.Source=ToImage(Properties.Resources.video_pause_button);
+                    Tray.Icon=Properties.Resources.video_pause_button1;
+                    StartStop.Content=image;
               
 
+                }
             }
-        }
 
         private static BitmapImage GetImage(string imageUri)
         {
@@ -109,9 +123,14 @@ namespace MusicWPF
                 }
                 catch
                 {
-                    await AwaitMedia();
-                    gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                    mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        Image.Source=null;
+                        Track.Text=String.Empty;
+                        Singer.Text=String.Empty;
+                        UpdatePlayPause("Paused");
+                    });
+                    return;
 
                 }
                 App.Current.Dispatcher.Invoke((Action)delegate
@@ -219,6 +238,7 @@ namespace MusicWPF
                 var CurrSession = gsmtcsm.GetCurrentSession();
 
                 await CurrSession.TrySkipPreviousAsync();
+                _=UpdatePlayback();
             }
             catch { }
 
@@ -231,6 +251,7 @@ namespace MusicWPF
                 var CurrSession = gsmtcsm.GetCurrentSession();
 
                 await CurrSession.TrySkipNextAsync();
+                _=UpdatePlayback();
             }
             catch { }
         }
@@ -263,9 +284,7 @@ namespace MusicWPF
                 
             else
             {
-                var primaryMonitorArea = SystemParameters.WorkArea;
-                Left = primaryMonitorArea.Right - Width - 10;
-                Top = primaryMonitorArea.Bottom - Height - 10;
+
                 this.Show();
             }
                 
@@ -274,6 +293,24 @@ namespace MusicWPF
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private async  void Tray_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var CurrSession = gsmtcsm.GetCurrentSession();
+                var play_back = CurrSession.GetPlaybackInfo();
+                if (play_back.PlaybackStatus.ToString()=="Paused")
+                {
+                    await CurrSession.TryPlayAsync();
+                }
+                else
+                {
+                    await CurrSession.TryPauseAsync();
+                }
+            }
+            catch { }
         }
     }
 }
