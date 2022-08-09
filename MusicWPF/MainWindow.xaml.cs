@@ -36,7 +36,7 @@ namespace MusicWPF
         public MainWindow()
         {
             InitializeComponent();
-            
+            //ss
 
             var primaryMonitorArea = SystemParameters.WorkArea;
             Left = primaryMonitorArea.Right - Width-5;
@@ -53,31 +53,12 @@ namespace MusicWPF
         }
         public  async Task Maisn()
         {
-            gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-            try
-            {
-                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
-            }
-            catch
-            {
-                await AwaitMedia();
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
-
-            }
-            CurrMusSession = gsmtcsm.GetCurrentSession();
-            try
-            {
-
-            
-            var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,300) };
-            timer.Tick += async (o,O) => await UpdatePlayback();
+           
+            var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,500) };
+            timer.Tick += async (o,O) => UpdatePlayback();
             timer.Start();
-            }
-            catch
-            {
-                MessageBox.Show("");
-            }
+           
+            GC.Collect();
 
         }
             private void UpdatePlayPause(string type)
@@ -102,15 +83,17 @@ namespace MusicWPF
 
                 }
             }
-        private async Task UpdatePlayback()
+        private async void UpdatePlayback()
         {
-
-            await Task.Run(async () =>
+            using (null)
             {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+
+           
                 try
-                {
-                    mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+            {
+               
+                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
                 }
                 catch
                 {
@@ -121,6 +104,7 @@ namespace MusicWPF
                         Singer.Text=String.Empty;
                         UpdatePlayPause("Paused");
                     });
+                    GC.Collect();
                     return;
 
                 }
@@ -138,12 +122,7 @@ namespace MusicWPF
                 });
                 try
                 {
-
-
                     var ssss = await mediaProperties.Thumbnail.OpenReadAsync();
-
-
-
                     using (StreamReader sr = new StreamReader(ssss.AsStreamForRead()))
                     {
                         var bytes = default(byte[]);
@@ -168,21 +147,12 @@ namespace MusicWPF
                         Image.Source=null;
                     });
                 }
-            });
-
-        }
-        private async Task Ss_PlaybackInfoChanged()
-        {
-            await Task.Run(async() => { 
-            while (true)
-            {
-                await UpdatePlayback();
-                    Thread.Sleep(250);
+            gsmtcsm=null;
+            mediaProperties=null;
+                GC.Collect();
             }
-            });
 
         }
-
         private BitmapImage ToImage(byte[] array)//Делаем из потока байтов картинку
         {
             using (var ms = new System.IO.MemoryStream(array))
@@ -240,10 +210,12 @@ namespace MusicWPF
         {
             try
             {
+                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
                 var CurrSession = gsmtcsm.GetCurrentSession();
 
                 await CurrSession.TrySkipPreviousAsync();
-                _=UpdatePlayback();
+                gsmtcsm=null;
+                UpdatePlayback();
             }
             catch { }
 
@@ -253,10 +225,12 @@ namespace MusicWPF
         {
             try
             {
+                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
                 var CurrSession = gsmtcsm.GetCurrentSession();
 
                 await CurrSession.TrySkipNextAsync();
-                _=UpdatePlayback();
+                gsmtcsm=null;
+                UpdatePlayback();
             }
             catch { }
         }
@@ -265,6 +239,7 @@ namespace MusicWPF
         {
             try
             {
+                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
                 var CurrSession = gsmtcsm.GetCurrentSession();
                 var play_back = CurrSession.GetPlaybackInfo();
                 if (play_back.PlaybackStatus.ToString()=="Paused")
@@ -275,6 +250,7 @@ namespace MusicWPF
                 {
                     await CurrSession.TryPauseAsync();
                 }
+                gsmtcsm=null;
             }
             catch { }
         }
