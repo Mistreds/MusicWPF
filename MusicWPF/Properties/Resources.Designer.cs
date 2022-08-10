@@ -61,52 +61,12 @@ namespace MusicWPF.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] music_back {
-            get {
-                object obj = ResourceManager.GetObject("music-back", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] music_next {
-            get {
-                object obj = ResourceManager.GetObject("music-next", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] play_button {
-            get {
-                object obj = ResourceManager.GetObject("play-button", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
         /// </summary>
         internal static System.Drawing.Icon play_button1 {
             get {
                 object obj = ResourceManager.GetObject("play-button1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] video_pause_button {
-            get {
-                object obj = ResourceManager.GetObject("video-pause-button", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

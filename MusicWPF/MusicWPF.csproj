@@ -8,32 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\music-back.png" />
-    <None Remove="Resources\music-next.png" />
     <None Remove="Resources\play-button.ico" />
-    <None Remove="Resources\play-button.png" />
     <None Remove="Resources\video-pause-button.ico" />
-    <None Remove="Resources\video-pause-button.png" />
-    <None Remove="Resource\music-back.png" />
-    <None Remove="Resource\play-button.png" />
-    <None Remove="Resource\video-pause-button.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\music-back.png" />
-    <Resource Include="Resources\music-next.png" />
     <Resource Include="Resources\play-button.ico" />
-    <Resource Include="Resources\play-button.png" />
     <Resource Include="Resources\video-pause-button.ico" />
-    <Resource Include="Resources\video-pause-button.png" />
-    <Resource Include="Resource\play-button.png" />
-    <Resource Include="Resource\video-pause-button.png" />
-    <EmbeddedResource Include="Resource\music-back.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="UwpDesktop-Updated" Version="10.0.17763.132" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MusicLibrary\MusicLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

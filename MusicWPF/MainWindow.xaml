@@ -5,60 +5,99 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicWPF"
         WindowStyle="None"
-        Topmost="True"
+        
          ShowInTaskbar="False"
           xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"  Background="Transparent" AllowsTransparency="True"
         Title="MainWindow" Height="150" Width="400">
     <Window.Resources>
-        <Image x:Key="ImageBack" Source="\Resource\music-back.png" />
-
+        <Grid x:Key="Start">
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" />
+            <Polygon Fill="White" Points="13, 10,13,26,25,18" />
+        </Grid>
+        <Grid x:Key="Stop">
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" />
+            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="-6,0,0,0" />
+            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="6,0,0,0" />
+        </Grid>
         <Image x:Key="ImageStart" Source="/Resources/play-button.png" />
         <Image x:Key="startico" Source="/Resources/play-button.ico" />
-
-        <Image x:Key="ImageForward" Source="/Resources/music-next.png" />
         <ContextMenu x:Key="Menu">
             <MenuItem Header="Закрыть" x:Name="Close" Click="Close_Click"></MenuItem>
         </ContextMenu>
+        <Style TargetType="Button"  x:Key="But">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <Border Padding="{TemplateBinding Padding}">
+                             <ContentPresenter HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#19FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Border Background="#B20B1520" CornerRadius="15">
-    <Grid>
-       
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-            <ColumnDefinition  Width="3*" ></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        <Grid>
 
-        <tb:TaskbarIcon    ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" ></tb:TaskbarIcon>
-        <Image x:Name="Image" Margin="10"  ></Image>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition  Width="3*" ></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0.5*"></RowDefinition>
-                <RowDefinition Height="1*" ></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="0.5*" ></RowDefinition>
-                <RowDefinition Height="1.5*"></RowDefinition>
-                <RowDefinition Height="0.5*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="Track" FontSize="16" Grid.Row="1"  Margin="5" Foreground="White"></TextBlock>
-            <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White"></TextBlock>
-            <Grid Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button Content="{StaticResource ImageBack}" BorderBrush="Transparent"  Background="Transparent" Grid.Column="0" x:Name="Back" Click="Back_Click">
-                </Button>
-                <Button Content="{StaticResource ImageStart}" BorderBrush="Transparent"  Background="Transparent" Grid.Column="1" x:Name="StartStop" Click="StartStop_Click"></Button>
-                <Button Content="{StaticResource   ImageForward}" BorderBrush="Transparent"  Background="Transparent"  x:Name="Next" Grid.Column="2" Click="Next_Click">
-                </Button>
+            <tb:TaskbarIcon    ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" >
+                
+            </tb:TaskbarIcon>
+            <Image x:Name="Image" Margin="10"  ></Image>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"></RowDefinition>
+                    <RowDefinition Height="30" ></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="15" ></RowDefinition>
+                    <RowDefinition Height="45"></RowDefinition>
+                    <RowDefinition Height="15"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="Track" FontSize="16" Grid.Row="1"  Margin="5" Foreground="White"></TextBlock>
+                <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White"></TextBlock>
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource But}" Width="45" Height="45" Padding="5"  BorderBrush="Transparent"   Grid.Column="0" x:Name="Back" Click="Back_Click">
+                        <Button.Content>
+                            <Grid>
+                                <Line X1="0" Y1="0" X2="0" Y2="30"  Stroke="White" StrokeThickness="2" />
+                                <Polygon Fill="White" Points="30, 0, 5, 15,30, 30" />
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                    <Button Style="{StaticResource But}"  Width="45" Height="45" Padding="2" BorderBrush="Transparent" Content="{StaticResource Stop}"  Grid.Column="1" x:Name="StartStop" Click="StartStop_Click">
+                    </Button>
+                    <Button Style="{StaticResource But}" Width="{Binding ElementName=Next, Path=ActualHeight}" Padding="5"   BorderBrush="Transparent"    x:Name="Next" Grid.Column="2" Click="Next_Click">
+                        <Button.Content>
+                            <Grid>
+                                <Line X1="30" Y1="0" X2="30" Y2="30" Stroke="White" StrokeThickness="2" />
+                                <Polygon Fill="White" Points="0, 0, 0, 30,25, 15" />
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
             </Grid>
-          
-        </Grid>
 
-    </Grid>
+        </Grid>
     </Border>
 </Window>

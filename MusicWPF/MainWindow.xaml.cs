@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -33,55 +34,76 @@ namespace MusicWPF
         private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
         private GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties;
         private GlobalSystemMediaTransportControlsSession CurrMusSession;
+        private readonly DoubleAnimation _oa;
+        private readonly DoubleAnimation _oa1;
         public MainWindow()
         {
+            var primaryMonitorArea = SystemParameters.WorkArea;
             InitializeComponent();
             //ss
 
-            var primaryMonitorArea = SystemParameters.WorkArea;
-            Left = primaryMonitorArea.Right - Width-5;
-            Top = primaryMonitorArea.Bottom - Height-5 ;
-            var image_next = new System.Windows.Controls.Image();
-            image_next.Source=ToImage(Properties.Resources.music_next);
-            Next.Content=image_next;
-            var image_back = new System.Windows.Controls.Image();
-            image_back.Source=ToImage(Properties.Resources.music_back);
-            Back.Content=image_back;
+            _oa = new DoubleAnimation();
+            _oa.From = primaryMonitorArea.Bottom;
+            _oa.To = primaryMonitorArea.Bottom-Height-5;
+            _oa.AutoReverse = false;
+            _oa.Duration = new Duration(TimeSpan.FromMilliseconds(300d));
+            _oa.Completed+=_oa_Completed;
+            _oa1 = new DoubleAnimation();
+            _oa1.From = primaryMonitorArea.Bottom-Height-5;
+            _oa1.To =  primaryMonitorArea.Bottom;
+            _oa1.AutoReverse = false;
+            _oa1.Completed+=_oa1_Completed;
+            _oa1.Duration = new Duration(TimeSpan.FromMilliseconds(300d));
+            Left = primaryMonitorArea.Right - Width-5; 
             Tray.Icon=Properties.Resources.play_button1;
             _ = Maisn();
+            this.Loaded+=MainWindow_Loaded;
             Hide();
         }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(Back.ActualWidth);
+        }
+
+        private void _oa_Completed(object sender, EventArgs e)
+        {
+            this.Topmost=true;
+        }
+
+        private void _oa1_Completed(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
+
         public  async Task Maisn()
         {
            
             var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,500) };
             timer.Tick += async (o,O) => UpdatePlayback();
             timer.Start();
-           
             GC.Collect();
 
         }
-            private void UpdatePlayPause(string type)
+        private void UpdatePlayPause(string type)
             {
                 if (type=="Paused")
                 {
-                    var image = new System.Windows.Controls.Image();
-                    image.Source=ToImage(Properties.Resources.play_button);
+                   
                     Tray.Icon=Properties.Resources.play_button1;
-                    StartStop.Content=image;
-              
+                StartStop.Content=this.FindResource("Start");
 
 
-                }
+
+            }
                 else
                 {
-                    var image = new System.Windows.Controls.Image();
-                    image.Source=ToImage(Properties.Resources.video_pause_button);
+                    
                     Tray.Icon=Properties.Resources.video_pause_button1;
-                    StartStop.Content=image;
-              
+                    StartStop.Content=this.FindResource("Stop");
 
-                }
+
+            }
             }
         private async void UpdatePlayback()
         {
@@ -181,31 +203,7 @@ namespace MusicWPF
 
         private  async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session)
      => await session.TryGetMediaPropertiesAsync();
-             
-            
-        
-
-        private async Task AwaitMedia()
-        {
-            await Task.Run(async() => {
-                while (true)
-                {
-                    try
-                    {
-                        var session= await GetSystemMediaTransportControlsSessionManager();
-                        var ss = await session.GetCurrentSession().TryGetMediaPropertiesAsync();
-                        break;
-                    }
-                    catch
-                    {
-                       
-                        continue;
-                    }
-                }
-            });
-                
-        
-        }
+                      
         private async void Back_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -257,16 +255,19 @@ namespace MusicWPF
 
         private void TaskbarIcon_TrayLeftMouseDown(object sender, RoutedEventArgs e)
         {
+            Activate();
+            Console.WriteLine(this.IsVisible);
             if (this.IsVisible)
             {
-             
-                this.Hide();
+                Topmost=false;
+                BeginAnimation(TopProperty, _oa1);
             }
                 
             else
             {
-
+                Topmost=false;
                 this.Show();
+                BeginAnimation(TopProperty, _oa);
                 HideFromAltTab(new System.Windows.Interop.WindowInteropHelper(this).Handle);
             }
                 

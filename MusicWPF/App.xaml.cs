@@ -19,14 +19,14 @@ namespace MusicWPF
         public App()
         {
 
-           // ConsoleHelper.AllocConsole();
+            //ConsoleHelper.AllocConsole();
             this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             
-            Process.Start("MusicWPF.exe");
-            Process.GetCurrentProcess().Kill();
+            //Process.Start("MusicWPF.exe");
+            //Process.GetCurrentProcess().Kill();
         }
         public class ConsoleHelper
         {
