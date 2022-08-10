@@ -22,7 +22,7 @@ using Windows.Media;
 using Windows.Media.Control;
 using Windows.Media.Playback;
 using static System.Net.Mime.MediaTypeNames;
-
+using MusicLibrary;
 namespace MusicWPF
 {
     /// <summary>
@@ -31,17 +31,24 @@ namespace MusicWPF
     public partial class MainWindow : Window
     {
 
-        private    GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
+        
+        private GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
         private GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties;
-        private GlobalSystemMediaTransportControlsSession CurrMusSession;
         private readonly DoubleAnimation _oa;
         private readonly DoubleAnimation _oa1;
+        private UpdateContent updateContent;
+        private UpdateImage updateImage;
+        private UpdatePlay updatePlay;
+        private MusicControls musicControls;
         public MainWindow()
         {
             var primaryMonitorArea = SystemParameters.WorkArea;
             InitializeComponent();
-            //ss
 
+            //ss
+            updateContent=UpdateContentWin;
+            updateImage=UpdateImageWin;
+            updatePlay=UpdatePlayPause;
             _oa = new DoubleAnimation();
             _oa.From = primaryMonitorArea.Bottom;
             _oa.To = primaryMonitorArea.Bottom-Height-5;
@@ -56,16 +63,40 @@ namespace MusicWPF
             _oa1.Duration = new Duration(TimeSpan.FromMilliseconds(300d));
             Left = primaryMonitorArea.Right - Width-5; 
             Tray.Icon=Properties.Resources.play_button1;
-            _ = Maisn();
+            // _ = Maisn();
+            musicControls=new MusicControls(updateContent,updateImage,updatePlay);
             this.Loaded+=MainWindow_Loaded;
             Hide();
         }
-
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(Back.ActualWidth);
         }
-
+        private void UpdateContentWin(string track, string singer, bool error)
+        {
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                if (error)
+                {
+                    Image.Source=null;
+                    Track.Text=String.Empty;
+                    Singer.Text=String.Empty;
+                }
+                else
+                {
+                    Track.Text=track;
+                    Singer.Text=singer;
+                }
+            });
+        }
+        private void UpdateImageWin(byte[] _image)
+        {
+            if (_image==null)
+                return;
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                Image.Source = ToImage(_image);
+            });
+        }
         private void _oa_Completed(object sender, EventArgs e)
         {
             this.Topmost=true;
@@ -76,15 +107,7 @@ namespace MusicWPF
             this.Hide();
         }
 
-        public  async Task Maisn()
-        {
-           
-            var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0,0,500) };
-            timer.Tick += async (o,O) => UpdatePlayback();
-            timer.Start();
-            GC.Collect();
-
-        }
+     
         private void UpdatePlayPause(string type)
             {
                 if (type=="Paused")
@@ -105,76 +128,6 @@ namespace MusicWPF
 
             }
             }
-        private async void UpdatePlayback()
-        {
-            using (null)
-            {
-
-           
-                try
-            {
-               
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
-                }
-                catch
-                {
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        Image.Source=null;
-                        Track.Text=String.Empty;
-                        Singer.Text=String.Empty;
-                        UpdatePlayPause("Paused");
-                    });
-                    GC.Collect();
-                    return;
-
-                }
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    Track.Text=mediaProperties.Title;
-                    Singer.Text=mediaProperties.Artist;
-                });
-                var CurrSession = gsmtcsm.GetCurrentSession();
-
-                var play_back = CurrSession.GetPlaybackInfo();
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    UpdatePlayPause(play_back.PlaybackStatus.ToString());
-                });
-                try
-                {
-                    var ssss = await mediaProperties.Thumbnail.OpenReadAsync();
-                    using (StreamReader sr = new StreamReader(ssss.AsStreamForRead()))
-                    {
-                        var bytes = default(byte[]);
-                        using (var memstream = new MemoryStream())
-                        {
-                            var buffer = new byte[512];
-                            var bytesRead = default(int);
-                            while ((bytesRead = sr.BaseStream.Read(buffer, 0, buffer.Length)) > 0)
-                                memstream.Write(buffer, 0, bytesRead);
-                            bytes = memstream.ToArray();
-                            App.Current.Dispatcher.Invoke((Action)delegate
-                            {
-                                Image.Source = ToImage(bytes);
-                            });
-                        }
-                    }
-                }
-                catch
-                {
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        Image.Source=null;
-                    });
-                }
-            gsmtcsm=null;
-            mediaProperties=null;
-                GC.Collect();
-            }
-
-        }
         private BitmapImage ToImage(byte[] array)//Делаем из потока байтов картинку
         {
             using (var ms = new System.IO.MemoryStream(array))
@@ -204,55 +157,10 @@ namespace MusicWPF
         private  async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session)
      => await session.TryGetMediaPropertiesAsync();
                       
-        private async void Back_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                var CurrSession = gsmtcsm.GetCurrentSession();
+        private  void Back_Click(object sender, RoutedEventArgs e) => musicControls.BackButton();
+        private  void Next_Click(object sender, RoutedEventArgs e) => musicControls.NextButton();
 
-                await CurrSession.TrySkipPreviousAsync();
-                gsmtcsm=null;
-                UpdatePlayback();
-            }
-            catch { }
-
-        }
-
-        private async void Next_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                var CurrSession = gsmtcsm.GetCurrentSession();
-
-                await CurrSession.TrySkipNextAsync();
-                gsmtcsm=null;
-                UpdatePlayback();
-            }
-            catch { }
-        }
-
-        private async void StartStop_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                var CurrSession = gsmtcsm.GetCurrentSession();
-                var play_back = CurrSession.GetPlaybackInfo();
-                if (play_back.PlaybackStatus.ToString()=="Paused")
-                {
-                    await CurrSession.TryPlayAsync();
-                }
-                else
-                {
-                    await CurrSession.TryPauseAsync();
-                }
-                gsmtcsm=null;
-            }
-            catch { }
-        }
-
+        private  void StartStop_Click(object sender, RoutedEventArgs e) => musicControls.StartStop();
         private void TaskbarIcon_TrayLeftMouseDown(object sender, RoutedEventArgs e)
         {
             Activate();
