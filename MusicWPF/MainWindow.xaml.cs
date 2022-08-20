@@ -81,7 +81,6 @@ namespace MusicWPF
                 Track1.BeginAnimation(Canvas.LeftProperty, Animation.StartSecondTrack);
                 
             }
-                
         }
         private void UpdatePlayPause(string type)
         {
