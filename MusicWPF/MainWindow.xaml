@@ -44,7 +44,7 @@
      BlurRadius="4"/>
                 </Ellipse.Effect>
             </Ellipse>
-                <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="-6,0,0,0" >
+            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="-6,0,0,0" >
                 <Rectangle.Effect>
                     <DropShadowEffect
       ShadowDepth="4"
@@ -77,7 +77,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
                             <Border Padding="{TemplateBinding Padding}">
-                             <ContentPresenter HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                                <ContentPresenter HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                             </Border>
                         </Border>
                     </ControlTemplate>
@@ -90,7 +90,6 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-
     <Border Background="#B20B1520" x:Name="Border" CornerRadius="15">
         <Grid>
 
