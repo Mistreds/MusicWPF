@@ -8,12 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\play-button.ico" />
     <None Remove="Resources\video-pause-button.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\play-button.ico" />
     <Resource Include="Resources\video-pause-button.ico" />
   </ItemGroup>
 

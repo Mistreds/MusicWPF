@@ -50,6 +50,8 @@ namespace MusicLibrary
                     GC.Collect();
                     return;
                 }
+                if (gsmtcsm==null)
+                    return;
                 var CurrSession = gsmtcsm.GetCurrentSession();
                 var play_back = CurrSession.GetPlaybackInfo();
                 updatePlay(play_back.PlaybackStatus.ToString());

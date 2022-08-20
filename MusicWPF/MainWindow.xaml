@@ -12,13 +12,58 @@
         Title="MainWindow" Height="150" Width="400">
     <Window.Resources>
         <Grid x:Key="Start">
-            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" />
-            <Polygon Fill="White" Points="13, 10,13,26,25,18" />
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" >
+                <Ellipse.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Ellipse.Effect>
+            </Ellipse>
+            <Polygon Fill="White" Points="13, 10,13,26,25,18" >
+                <Polygon.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Polygon.Effect>
+            </Polygon>
         </Grid>
         <Grid x:Key="Stop">
-            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" />
-            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="-6,0,0,0" />
-            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="6,0,0,0" />
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="35" Height="35" >
+                <Ellipse.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Ellipse.Effect>
+            </Ellipse>
+                <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="-6,0,0,0" >
+                <Rectangle.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle Fill="White" Width="3" Height="20" RadiusX="1" RadiusY="1" Margin="6,0,0,0" >
+                <Rectangle.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Rectangle.Effect>
+            </Rectangle>
         </Grid>
         <Image x:Key="ImageStart" Source="/Resources/play-button.png" />
         <Image x:Key="startico" Source="/Resources/play-button.ico" />
@@ -46,7 +91,7 @@
         </Style>
     </Window.Resources>
 
-    <Border Background="#B20B1520" CornerRadius="15">
+    <Border Background="#B20B1520" x:Name="Border" CornerRadius="15">
         <Grid>
 
             <Grid.ColumnDefinitions>
@@ -54,11 +99,12 @@
                 <ColumnDefinition  Width="3*" ></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <tb:TaskbarIcon    ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Дяда Зураб" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" >
+            <tb:TaskbarIcon      ContextMenu="{StaticResource Menu}" Visibility="Visible" x:Name="Tray"  ToolTipText="Music Control" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" >
                 
             </tb:TaskbarIcon>
-            <Image x:Name="Image" Margin="10"  ></Image>
-
+            <Grid Panel.ZIndex="1" >
+                <Image  x:Name="Image" Margin="10"  ></Image>
+            </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="15"></RowDefinition>
@@ -68,8 +114,43 @@
                     <RowDefinition Height="45"></RowDefinition>
                     <RowDefinition Height="15"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock x:Name="Track" FontSize="16" Grid.Row="1"  Margin="5" Foreground="White"></TextBlock>
-                <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White"></TextBlock>
+
+                <Canvas x:Name="сanvas" Background="{Binding ElementName=Border, Path=Background}" Grid.Row="1"  Width="230"
+                VerticalAlignment="Top">
+                    <Canvas.Clip>
+                        <RectangleGeometry Rect="0 0 230 30" />
+                    </Canvas.Clip>
+                    <TextBlock x:Name="Track" SizeChanged="Track_SizeChanged" MinWidth="230"  Text=""   Panel.ZIndex="0" FontSize="16" Grid.Row="1"   Foreground="White">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock x:Name="Track1" MinWidth="230" Canvas.Left="-230" Text=""   Panel.ZIndex="0" FontSize="16" Grid.Row="1"   Foreground="White">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </Canvas>
+                <TextBlock x:Name="Singer" Grid.Row="2" Margin="5" Foreground="White">
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                    </TextBlock.Effect>
+                </TextBlock>
                 <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
@@ -79,8 +160,26 @@
                     <Button Style="{StaticResource But}" Width="45" Height="45" Padding="5"  BorderBrush="Transparent"   Grid.Column="0" x:Name="Back" Click="Back_Click">
                         <Button.Content>
                             <Grid>
-                                <Line X1="0" Y1="0" X2="0" Y2="30"  Stroke="White" StrokeThickness="2" />
-                                <Polygon Fill="White" Points="30, 0, 5, 15,30, 30" />
+                                <Line X1="0" Y1="0" X2="0" Y2="30"  Stroke="White" StrokeThickness="2" >
+                                    <Line.Effect>
+                                        <DropShadowEffect
+          ShadowDepth="4"
+          Direction="330"
+          Color="Black"
+          Opacity="0.5"
+         BlurRadius="4"/>                       
+                                    </Line.Effect>
+                                </Line>
+                                    <Polygon Fill="White" Points="30, 0, 5, 15,30, 30" >
+                                    <Polygon.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>       
+                                    </Polygon.Effect>
+                                </Polygon>
                             </Grid>
                         </Button.Content>
                     </Button>
@@ -89,8 +188,26 @@
                     <Button Style="{StaticResource But}" Width="{Binding ElementName=Next, Path=ActualHeight}" Padding="5"   BorderBrush="Transparent"    x:Name="Next" Grid.Column="2" Click="Next_Click">
                         <Button.Content>
                             <Grid>
-                                <Line X1="30" Y1="0" X2="30" Y2="30" Stroke="White" StrokeThickness="2" />
-                                <Polygon Fill="White" Points="0, 0, 0, 30,25, 15" />
+                                <Line X1="30" Y1="0" X2="30" Y2="30" Stroke="White" StrokeThickness="2" >
+                                    <Line.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>               
+                                    </Line.Effect>
+                                </Line>
+                                <Polygon Fill="White" Points="0, 0, 0, 30,25, 15" >
+                                    <Polygon.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>
+                                    </Polygon.Effect>
+                                </Polygon>
                             </Grid>
                         </Button.Content>
                     </Button>
