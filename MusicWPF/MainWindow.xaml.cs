@@ -1,5 +1,6 @@
 ﻿using MusicLibrary;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -124,6 +125,12 @@ namespace MusicWPF
             Canvas.SetLeft(Track, 0);
             Canvas.SetLeft(Track1, Track1.ActualWidth+360);
             StartTrackAnimation();
+        }
+
+        private void Restart_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("MusicWPF.exe");
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

@@ -26,21 +26,23 @@ namespace MusicLibrary
             this.updateContent = updateContent;
             this.updateImage= updateImage;
             this.updatePlay=updatePlay;
+            GetGSMT();
             MusicInfo= new MusicInfo(); 
-                var timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 500) };
-                timer.Tick += (o, O) => UpdatePlayback();
-                timer.Start();
+                Timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 500) };
+                Timer.Tick += (o, O) => UpdatePlayback();
+                Timer.Start();
                 GC.Collect();
 
 
         }
+        private async void GetGSMT() => gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
         private async void UpdatePlayback()
         {
             using (null)
             {
                 try
                 {
-                    gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                  
                     mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
                 }
                 catch
@@ -72,7 +74,6 @@ namespace MusicLibrary
                 updateContent(mediaProperties.Title, mediaProperties.Artist, false);
 
                 GetImage();
-                gsmtcsm=null;
                 mediaProperties=null;
                 GC.Collect();
             }
@@ -96,6 +97,7 @@ namespace MusicLibrary
                             return;
                         updateImage(bytes);
                         MusicInfo.Image=bytes;
+                        bytes=null;
                     }
                 }
             }
@@ -104,6 +106,8 @@ namespace MusicLibrary
             {
                 updateImage(null);
             }
+
+            GC.Collect();
         }
 
         private async Task<GlobalSystemMediaTransportControlsSessionManager> GetSystemMediaTransportControlsSessionManager() =>
@@ -115,50 +119,55 @@ namespace MusicLibrary
         {
             try
             {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+   
                 var CurrSession = gsmtcsm.GetCurrentSession();
 
-                await CurrSession.TrySkipNextAsync();
-                gsmtcsm=null;
-
+                _=  CurrSession.TrySkipNextAsync();
+                
             }
             catch 
-            { 
+            {
+                return;
             }
+            GC.Collect();
         }
         public async void BackButton()
         {
             try
             {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                
                 var CurrSession = gsmtcsm.GetCurrentSession();
-
-                await CurrSession.TrySkipPreviousAsync();
-                gsmtcsm=null;
+                _=  CurrSession.TrySkipPreviousAsync();
+                
 
             }
             catch
             {
+                GC.Collect();
+                return;
             }
+            GC.Collect();
         }
         public async void StartStop()
         {
             try
             {
-                gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                
                 var CurrSession = gsmtcsm.GetCurrentSession();
                 var play_back = CurrSession.GetPlaybackInfo();
                 if (play_back.PlaybackStatus.ToString()=="Paused")
                 {
-                    await CurrSession.TryPlayAsync();
+                   _= CurrSession.TryPlayAsync();
                 }
                 else
                 {
-                    await CurrSession.TryPauseAsync();
+                    _= CurrSession.TryPauseAsync();
                 }
-                gsmtcsm=null;
+                
+                GC.Collect();
             }
-            catch { }
+            catch { GC.Collect(); return; }
+            GC.Collect();
         }
     }
     }

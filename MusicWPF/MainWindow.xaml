@@ -69,6 +69,7 @@
         <Image x:Key="startico" Source="/Resources/play-button.ico" />
         <ContextMenu x:Key="Menu">
             <MenuItem Header="Закрыть" x:Name="Close" Click="Close_Click"></MenuItem>
+            <MenuItem Header="Перезапустить" x:Name="Restart" Click="Restart_Click"></MenuItem>
         </ContextMenu>
         <Style TargetType="Button"  x:Key="But">
             <Setter Property="Background" Value="Transparent"></Setter>

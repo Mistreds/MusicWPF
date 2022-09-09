@@ -68,6 +68,7 @@ namespace MusicLibrary
             b=b/(image.PixelHeight*image.PixelWidth);
             //Color s=Color.FromArgb(r,g,b);
             System.Windows.Media.Color color = System.Windows.Media.Color.FromArgb(150, (byte)r, (byte)g, (byte)b);
+            GC.Collect();
             return new System.Windows.Media.SolidColorBrush(color);
         }
     }
