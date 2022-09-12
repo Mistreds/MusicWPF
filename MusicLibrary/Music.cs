@@ -10,7 +10,7 @@ namespace MusicLibrary
 {
    public delegate void UpdateContent(string track, string singer,bool error);
    public delegate void UpdateImage(byte[] image);
-    public delegate void UpdatePlay(string type);
+   public delegate void UpdatePlay(string type);
     public class MusicControls
     {
         private GlobalSystemMediaTransportControlsSessionManager gsmtcsm;
