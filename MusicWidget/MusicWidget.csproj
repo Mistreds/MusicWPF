@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MusicLibrary\MusicLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\music-back.png" />
     <Resource Include="Resources\music-next.png" />
     <Resource Include="Resources\play-button.png" />
