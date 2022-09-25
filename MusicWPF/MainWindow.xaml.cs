@@ -33,12 +33,14 @@ namespace MusicWPF
             updatePlay=UpdatePlayPause;
             Left = primaryMonitorArea.Right - Width-5;
             Tray.Icon=Properties.Resources.play_button;
-            Hide();
+           
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            
             Animation=new Animation(this);
             musicControls=new MusicControls(updateContent, updateImage, updatePlay);
+            Hide();\
         }
         private void UpdateContentWin(string track, string singer, bool error)
         {
