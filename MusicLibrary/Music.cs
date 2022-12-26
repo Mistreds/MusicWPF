@@ -44,7 +44,7 @@ namespace MusicLibrary
                     await UpdatePlayback();
                 }
                 catch { }
-                Thread.Sleep(100);
+                Thread.Sleep(700);
             }
            
         }
