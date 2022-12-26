@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace MusicLibrary
 {
@@ -13,8 +14,8 @@ namespace MusicLibrary
     {
         public static BitmapImage ToBitmapImage(byte[] array)//Делаем из потока байтов картинку
         {
-            using (var ms = new System.IO.MemoryStream(array))
-            {
+          
+                using var ms = new System.IO.MemoryStream(array);
                 try
                 {
                     var image = new BitmapImage();
@@ -31,7 +32,9 @@ namespace MusicLibrary
                 {
                     return null;
                 }
-            }
+           
+            
+        
         }
         private static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
@@ -47,28 +50,34 @@ namespace MusicLibrary
                 return new Bitmap(bitmap);
             }
         }
-        public static System.Windows.Media.SolidColorBrush GetColor(BitmapImage image)
+        public static async Task<System.Windows.Media.SolidColorBrush> GetColor(BitmapImage image)
         {
             var bitmap = BitmapImage2Bitmap(image);
+            var pixh = image.PixelHeight;
+            var pixw = image.PixelWidth;
+            System.Windows.Media.Color color = new System.Windows.Media.Color();
+            await Task.Run(() => { 
+          
             int r = 0;
             int g = 0;
             int b = 0;
-            for (int i = 0; i<image.PixelHeight; i++)
+            for (int i = 0; i<pixw; i++)
             {
-                for (int j = 0; j<image.PixelWidth; j++)
+                for (int j = 0; j<pixh; j++)
                 {
                     r+=bitmap.GetPixel(i, j).R;
                     g+=bitmap.GetPixel(i, j).G;
                     b+=bitmap.GetPixel(i, j).B;
+                    }
                 }
-            }
 
-            r=r/(image.PixelHeight*image.PixelWidth);
-            g=g/(image.PixelHeight*image.PixelWidth);
-            b=b/(image.PixelHeight*image.PixelWidth);
+            r=r/(pixh*pixw);
+            g=g/(pixh*pixw);
+            b=b/(pixh*pixw);
             //Color s=Color.FromArgb(r,g,b);
-            System.Windows.Media.Color color = System.Windows.Media.Color.FromArgb(150, (byte)r, (byte)g, (byte)b);
-            GC.Collect();
+            color = System.Windows.Media.Color.FromArgb(150, (byte)r, (byte)g, (byte)b);
+            GC.Collect();  
+            });
             return new System.Windows.Media.SolidColorBrush(color);
         }
     }

@@ -5,8 +5,223 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicWidget"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        SizeChanged="Window_SizeChanged"
+        StateChanged="Window_StateChanged_1"
+        IsVisibleChanged="Window_IsVisibleChanged"
+        x:Name="Window"
+        Title="MainWindow" Height="450" Width="800"  MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove">
+    <Window.Resources>
+        <local:RectConverter x:Key="RectConverter"></local:RectConverter>
+        <local:NegativeIntConverter x:Key="negativeConv"></local:NegativeIntConverter>
+        <Grid x:Key="Start">
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="65" Height="65" >
+                <Ellipse.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Ellipse.Effect>
+            </Ellipse>
+            <Polygon Fill="White" Points="20, 10,20,55,55,32.5" >
+                <Polygon.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Polygon.Effect>
+            </Polygon>
+        </Grid>
+        <Grid x:Key="Stop">
+            <Ellipse StrokeThickness="2"  Stroke="White"  Width="65" Height="65" >
+                <Ellipse.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Ellipse.Effect>
+            </Ellipse>
+            <Rectangle Fill="White" Width="5" Height="50" RadiusX="1" RadiusY="1" Margin="-10,0,0,0" >
+                <Rectangle.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle Fill="White" Width="5" Height="50" RadiusX="1" RadiusY="1" Margin="10,0,0,0" >
+                <Rectangle.Effect>
+                    <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                </Rectangle.Effect>
+            </Rectangle>
+        </Grid>
+        <Image x:Key="ImageStart" Source="/Resources/play-button.png" />
+        <Image x:Key="startico" Source="/Resources/play-button.ico" />
+        <ContextMenu x:Key="Menu">
+            <MenuItem Header="Закрыть"  x:Name="Close" Click="Close_Click"></MenuItem>
+            <MenuItem Header="Разрешить\запретить перемещение"  x:Name="MoveClick" Click="MoveClick_Click"></MenuItem>
+        </ContextMenu>
+        <Style TargetType="Button"  x:Key="But">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#19FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Border Background="#B20B1520" ContextMenu="{StaticResource Menu}" x:Name="Border" CornerRadius="15">
+        <Grid>
 
-    </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"></RowDefinition>
+                <RowDefinition MinHeight="185"></RowDefinition>
+                <RowDefinition Height="10" ></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="3*" ></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Grid Panel.ZIndex="1" >
+                <Image  x:Name="Image" Margin="10"  ></Image>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"></RowDefinition>
+                    <RowDefinition Height="30" ></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="15" ></RowDefinition>
+                    <RowDefinition Height="80" MinHeight="80"></RowDefinition>
+                    <RowDefinition Height="15"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Canvas x:Name="сanvas"  Background="{Binding ElementName=Border, Path=Background}" Grid.Row="1" Margin="30,0,30,0"
+                VerticalAlignment="Top">
+                    <Canvas.Clip>
+                        <RectangleGeometry  Rect="{Binding ElementName=Window, Path=ActualWidth, Converter={StaticResource RectConverter}}" />
+                    </Canvas.Clip>
+                    <TextBlock x:Name="Track" SizeChanged="Track_SizeChanged"   Text="Fist by Fist (Sacralize or Strike)feat. Matthew Kiichi Heafy"   Panel.ZIndex="0" FontSize="20" Grid.Row="1"   Foreground="White">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock x:Name="Track1"  Canvas.Left="{Binding ElementName=Window, Path=ActualWidth, Converter={StaticResource negativeConv}, UpdateSourceTrigger=PropertyChanged}" Text="Fist by Fist (Sacralize or Strike)feat. Matthew Kiichi Heafy"   Panel.ZIndex="0" FontSize="20" Grid.Row="1"   Foreground="White">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </Canvas>
+                <TextBlock x:Name="Singer" Grid.Row="2" FontSize="16" Margin="30,0,0,0" Foreground="White">
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+      ShadowDepth="4"
+      Direction="330"
+      Color="Black"
+      Opacity="0.5"
+     BlurRadius="4"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource But}" Width="80" Height="80" Padding="5"  BorderBrush="Transparent"   Grid.Column="0" x:Name="Back" Click="Back_Click">
+                        <Button.Content>
+                            <Grid>
+                                <Line X1="0" Y1="0" X2="0" Y2="65"  Stroke="White" StrokeThickness="2" >
+                                    <Line.Effect>
+                                        <DropShadowEffect
+          ShadowDepth="4"
+          Direction="330"
+          Color="Black"
+          Opacity="0.5"
+         BlurRadius="4"/>
+                                    </Line.Effect>
+                                </Line>
+                                <Polygon Fill="White" Points="65, 0, 5, 32.5,65, 65" >
+                                    <Polygon.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>
+                                    </Polygon.Effect>
+                                </Polygon>
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                    <Button Style="{StaticResource But}"  Width="80" Height="80" Padding="2" BorderBrush="Transparent" Content="{StaticResource   Start}"  Grid.Column="1" x:Name="StartStop" Click="StartStop_Click">
+                    </Button>
+                    <Button Style="{StaticResource But}" Width="80" Height="80" Padding="5"   BorderBrush="Transparent"    x:Name="Next" Grid.Column="2" Click="Next_Click">
+                        <Button.Content>
+                            <Grid>
+                                <Line X1="65" Y1="0" X2="65" Y2="65" Stroke="White" StrokeThickness="2" >
+                                    <Line.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>
+                                    </Line.Effect>
+                                </Line>
+                                <Polygon Fill="White" Points="0, 0, 0, 65,60, 32.5" >
+                                    <Polygon.Effect>
+                                        <DropShadowEffect
+                                              ShadowDepth="4"
+                                              Direction="330"
+                                              Color="Black"
+                                              Opacity="0.5"
+                                             BlurRadius="4"/>
+                                    </Polygon.Effect>
+                                </Polygon>
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+            </Grid>
+
+        </Grid>
+    </Border>
 </Window>

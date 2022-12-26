@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Windows.Media.Control;
-using static System.Net.Mime.MediaTypeNames;
 namespace MusicWPF
 {
     /// <summary>
@@ -62,15 +61,15 @@ namespace MusicWPF
             });
 
         }
-        private void UpdateImageWin(byte[] _image)
+        private async void UpdateImageWin(byte[] _image)
         {
             if (_image==null)
                 return;
-            App.Current.Dispatcher.Invoke(delegate
+          await  App.Current.Dispatcher.Invoke(async delegate
             {
                 var image = ConvertImage.ToBitmapImage(_image);
                 Image.Source = image;
-                Border.Background=ConvertImage.GetColor(image);
+                Border.Background=await ConvertImage.GetColor(image);
             });
         }
         private void StartTrackAnimation()
@@ -85,10 +84,16 @@ namespace MusicWPF
 
             }
         }
+       
+       
         private void UpdatePlayPause(string type)
         {
+            Application.Current.Dispatcher.Invoke(() =>
+
+        { 
             if (type=="Paused")
             {
+
                 Tray.Icon=Properties.Resources.play_button;
                 StartStop.Content=this.FindResource("Start");
             }
@@ -97,6 +102,7 @@ namespace MusicWPF
                 Tray.Icon=Properties.Resources.video_pause_button1;
                 StartStop.Content=this.FindResource("Stop");
             }
+        });
         }
         private void Back_Click(object sender, RoutedEventArgs e) => musicControls.BackButton();
         private void Next_Click(object sender, RoutedEventArgs e) => musicControls.NextButton();

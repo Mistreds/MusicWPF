@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
@@ -20,24 +21,37 @@ namespace MusicLibrary
         UpdateImage updateImage;
         UpdatePlay updatePlay;
         private MusicInfo MusicInfo;
+        private Thread Thread;
         int i = 0;
         public MusicControls(UpdateContent updateContent, UpdateImage updateImage,UpdatePlay updatePlay)
         {
             this.updateContent = updateContent;
             this.updateImage= updateImage;
             this.updatePlay=updatePlay;
-            GetGSMT();
-            MusicInfo= new MusicInfo(); 
-                Timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 500) };
-                Timer.Tick += (o, O) => UpdatePlayback();
-                Timer.Start();
-                GC.Collect();
+            Thread=new Thread(StartMusic);
+            Thread.Start();
 
 
         }
-        private async void GetGSMT() => gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-        private async void UpdatePlayback()
+        private async void StartMusic()
         {
+            GetGSMT();
+            MusicInfo= new MusicInfo();
+            while (true)
+            {
+                try
+                {
+                    await UpdatePlayback();
+                }
+                catch { }
+                Thread.Sleep(100);
+            }
+           
+        }
+        private async void GetGSMT() => gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+        private async Task UpdatePlayback()
+        {
+            await Task.Run(async () => { 
             using (null)
             {
                 try
@@ -50,6 +64,7 @@ namespace MusicLibrary
                     updateContent(null, null, true);
                     updatePlay("Paused");
                     GC.Collect();
+                    gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
                     return;
                 }
                 if (gsmtcsm==null)
@@ -77,6 +92,7 @@ namespace MusicLibrary
                 mediaProperties=null;
                 GC.Collect();
             }
+            });
         }
         private async void GetImage()
         {
