@@ -33,14 +33,14 @@ namespace MusicWPF
             updatePlay=UpdatePlayPause;
             Left = primaryMonitorArea.Right - Width-5;
             Tray.Icon=Properties.Resources.play_button;
-           
+
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             Animation=new Animation(this);
             musicControls=new MusicControls(updateContent, updateImage, updatePlay);
-            Hide();\
+            Hide();
         }
         private void UpdateContentWin(string track, string singer, bool error)
         {
@@ -57,10 +57,10 @@ namespace MusicWPF
                     Track.Text=track;
                     Track1.Text=track;
                     Singer.Text=singer;
-                    
+
                 }
             });
-          
+
         }
         private void UpdateImageWin(byte[] _image)
         {
@@ -82,7 +82,7 @@ namespace MusicWPF
                 Animation.UpdateTrackAnimation();
                 Track.BeginAnimation(Canvas.LeftProperty, Animation.StartFirstTrack);
                 Track1.BeginAnimation(Canvas.LeftProperty, Animation.StartSecondTrack);
-                
+
             }
         }
         private void UpdatePlayPause(string type)

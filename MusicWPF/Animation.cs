@@ -31,7 +31,8 @@ namespace MusicWPF
             OnHide.AutoReverse = false;
             OnHide.Duration = new Duration(TimeSpan.FromMilliseconds(300d));
             OnHide.Completed+=OnHide_Completed;
-         
+            
+
         }
         public void UpdateTrackAnimation()
         {
@@ -49,13 +50,14 @@ namespace MusicWPF
         }
         private void StartFistTrack_Completed(object sender, EventArgs e)
         {
-           
+
             Window.Track.BeginAnimation(Canvas.LeftProperty, StartSecondTrack);
         }
 
         private void OnHide_Completed(object sender, EventArgs e)
         {
             Window.Hide();
+
         }
 
         private void OnShow_Completed(object sender, EventArgs e)
