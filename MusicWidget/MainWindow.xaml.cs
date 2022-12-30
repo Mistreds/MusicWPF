@@ -37,7 +37,6 @@ namespace MusicWidget
         private Animation Animation;
         private RegistryKey currApp;
         private bool IsBlockMove;
-        private DispatcherTimer Timer;
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindowEx(IntPtr hP, IntPtr hC, string sC,
     string sW);
@@ -91,16 +90,6 @@ namespace MusicWidget
             UpdateLeftTop();
 
         }
-        private async void Window_StateChanged_1(object sender, EventArgs e)
-        {
-            
-            
-        }
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            
-        }
-        
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             
@@ -195,7 +184,7 @@ namespace MusicWidget
             if (_image==null)
                 return;
            
-         await   App.Current.Dispatcher.Invoke(async delegate
+         await App.Current.Dispatcher.Invoke(async delegate
             {
                 var image = ConvertImage.ToBitmapImage(_image);
                 if (image==image_)
@@ -203,7 +192,6 @@ namespace MusicWidget
                 image_=image;
                 Image.Source = image;
                 var ss=await ConvertImage.GetColor(image);
-                Console.WriteLine(ss.Color);
                 Border.Background=await ConvertImage.GetColor(image);
             });
         }
@@ -228,7 +216,6 @@ namespace MusicWidget
 
             }
         }
-        private DispatcherTimer Dispatcher = new DispatcherTimer();
         private void Back_Click(object sender, RoutedEventArgs e) => musicControls.BackButton();
         private void Next_Click(object sender, RoutedEventArgs e) => musicControls.NextButton();
         private void StartStop_Click(object sender, RoutedEventArgs e) => musicControls.StartStop();

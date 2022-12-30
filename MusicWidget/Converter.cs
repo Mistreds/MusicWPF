@@ -27,10 +27,9 @@ namespace MusicWidget
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Console.WriteLine(value);
             double x= (double)value;
-            if(x-60>0)
-                return new Rect(0, 0, (Double)value, 30);
+            if(x-30>0)
+                return new Rect(0, 0, (Double)value-30, 30);
             else
                 return new Rect(0, 0, (Double)value, 30);
         }
