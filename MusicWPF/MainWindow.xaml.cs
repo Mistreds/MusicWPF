@@ -32,7 +32,7 @@ namespace MusicWPF
             updatePlay=UpdatePlayPause;
             Left = primaryMonitorArea.Right - Width-5;
             Tray.Icon=Properties.Resources.play_button;
-
+           
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
