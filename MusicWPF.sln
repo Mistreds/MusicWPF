@@ -9,7 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibrary", "MusicLibrar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicWidget", "MusicWidget\MusicWidget.csproj", "{1A3A4E3E-83D6-4542-B9B4-3BEA4EF5FB11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSwitcher", "MusicSwitcher\MusicSwitcher.csproj", "{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{C9701933-6910-40A2-826D-D113960B892F}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,26 +88,6 @@ Global
 		{1A3A4E3E-83D6-4542-B9B4-3BEA4EF5FB11}.Release|x64.Build.0 = Release|Any CPU
 		{1A3A4E3E-83D6-4542-B9B4-3BEA4EF5FB11}.Release|x86.ActiveCfg = Release|Any CPU
 		{1A3A4E3E-83D6-4542-B9B4-3BEA4EF5FB11}.Release|x86.Build.0 = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|ARM.Build.0 = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|x64.Build.0 = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Debug|x86.Build.0 = Debug|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|ARM.ActiveCfg = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|ARM.Build.0 = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|ARM64.Build.0 = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|x64.ActiveCfg = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|x64.Build.0 = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|x86.ActiveCfg = Release|Any CPU
-		{CA1872C8-A0ED-4490-A8E4-570EF8497EAC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
